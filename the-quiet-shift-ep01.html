@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automated the Hiring Pipeline — The Quiet Shift | Gijendra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080a0f;
+      --surface: #0e1117;
+      --surface2: #141820;
+      --border: rgba(255, 255, 255, 0.06);
+      --border-bright: rgba(255, 255, 255, 0.12);
+      --red: #ff2d2d;
+      --red-dim: rgba(255, 45, 45, 0.12);
+      --amber: #ffaa00;
+      --green: #00e5a0;
+      --blue: #3b82f6;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --mono: 'JetBrains Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'DM Sans', sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 17px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8, 10, 15, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--green);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nav-badge {
+      background: var(--red);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 3px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: badge-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes badge-pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 45, 45, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 45, 45, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 45, 45, 0.08) 0%, transparent 70%);
+      top: -200px;
+      right: -200px;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .eyebrow-line {
+      width: 40px;
+      height: 1px;
+      background: var(--red);
+    }
+
+    .eyebrow-text {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--red);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-family: var(--display);
+      font-size: clamp(64px, 10vw, 130px);
+      line-height: 0.9;
+      letter-spacing: 0.01em;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 .accent {
+      color: var(--red);
+      display: block;
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      color: var(--muted);
+      font-weight: 300;
+      max-width: 640px;
+      margin: 24px 0 40px;
+      line-height: 1.6;
+    }
+
+    .hero-subtitle strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .meta-chip {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .meta-chip::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 1;
+    }
+
+    .scroll-cue span {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .scroll-arrow {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--muted), transparent);
+      animation: scroll-drop 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scroll-drop {
+      0% {
+        transform: scaleY(0);
+        transform-origin: top;
+        opacity: 0;
+      }
+
+      50% {
+        transform: scaleY(1);
+        transform-origin: top;
+        opacity: 1;
+      }
+
+      100% {
+        transform: scaleY(1);
+        transform-origin: bottom;
+        opacity: 0;
+      }
+    }
+
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .warning-banner {
+      background: var(--red-dim);
+      border-top: 1px solid rgba(255, 45, 45, 0.3);
+      border-bottom: 1px solid rgba(255, 45, 45, 0.3);
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin: 0;
+    }
+
+    .warning-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .warning-banner p {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #ffaaaa;
+      line-height: 1.5;
+    }
+
+    .warning-banner strong {
+      color: #fff;
+    }
+
+    .section-header {
+      padding: 80px 0 48px;
+    }
+
+    .section-number {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--red);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-number::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--red);
+      opacity: 0.4;
+    }
+
+    .section-header h2 {
+      font-family: var(--display);
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1;
+      color: #fff;
+      letter-spacing: 0.01em;
+    }
+
+    .prose {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .prose p {
+      color: #b0b6c2;
+      font-size: 17px;
+      line-height: 1.8;
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+
+    .prose p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 48px 0;
+    }
+
+    .stat-item {
+      background: var(--surface);
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: var(--display);
+      font-size: 52px;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .stat-value.red {
+      color: var(--red);
+    }
+
+    .stat-value.amber {
+      color: var(--amber);
+    }
+
+    .stat-value.green {
+      color: var(--green);
+    }
+
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.4;
+    }
+
+    .insight-block {
+      background: var(--surface);
+      border: 1px solid var(--border-bright);
+      border-left: 3px solid var(--green);
+      border-radius: 0 12px 12px 0;
+      padding: 24px 28px;
+      margin: 32px 0;
+    }
+
+    .insight-block p {
+      color: #b0b6c2;
+      font-size: 16px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .insight-block p strong {
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    .workflow-steps {
+      margin: 48px 0;
+    }
+
+    .step-item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 0;
+      margin-bottom: 2px;
+      position: relative;
+    }
+
+    .step-item::before {
+      content: '';
+      position: absolute;
+      left: 27px;
+      top: 56px;
+      bottom: -2px;
+      width: 1px;
+      background: var(--border-bright);
+    }
+
+    .step-item:last-child::before {
+      display: none;
+    }
+
+    .step-num {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--red);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-body {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-left: 16px;
+      margin-bottom: 16px;
+    }
+
+    .step-title {
+      font-family: var(--display);
+      font-size: 22px;
+      color: #fff;
+      letter-spacing: 0.03em;
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .step-tag {
+      display: inline-block;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      letter-spacing: 0.05em;
+    }
+
+    .screenshot-block {
+      margin: 48px 0;
+    }
+
+    .screenshot-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .screenshot-label span {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--amber);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .screenshot-label::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      flex-shrink: 0;
+    }
+
+    .screenshot-frame {
+      border: 1px solid var(--border-bright);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--surface2);
+      position: relative;
+    }
+
+    .screenshot-titlebar {
+      background: var(--surface);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.red {
+      background: #ff5f57;
+    }
+
+    .dot.yellow {
+      background: #ffbd2e;
+    }
+
+    .dot.green {
+      background: #28c840;
+    }
+
+    .screenshot-url {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0 8px;
+    }
+
+    .screenshot-img-area {
+      width: 100%;
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screenshot-img-area img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .screenshot-placeholder {
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .screenshot-placeholder .ph-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    .screenshot-placeholder p {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      opacity: 0.4;
+    }
+
+    .screenshot-caption {
+      padding: 14px 20px;
+      background: rgba(255, 170, 0, 0.05);
+      border-top: 1px solid rgba(255, 170, 0, 0.1);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #ffcc66;
+    }
+
+    .tool-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 32px 0;
+      font-size: 15px;
+    }
+
+    .tool-table th {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-align: left;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-bright);
+    }
+
+    .tool-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .tool-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tool-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tool-name {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    .tool-badge {
+      display: inline-block;
+      background: rgba(0, 229, 160, 0.1);
+      border: 1px solid rgba(0, 229, 160, 0.2);
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 40px;
+    }
+
+    .demo-callout {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.03));
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 16px;
+      padding: 36px 40px;
+      margin: 48px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .demo-callout::before {
+      content: 'DEMO';
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      font-family: var(--display);
+      font-size: 80px;
+      color: rgba(59, 130, 246, 0.06);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .demo-callout h3 {
+      font-family: var(--display);
+      font-size: 28px;
+      color: #93c5fd;
+      letter-spacing: 0.03em;
+      margin-bottom: 12px;
+    }
+
+    .demo-callout p {
+      color: #6b8cba;
+      font-size: 15px;
+      line-height: 1.7;
+      font-weight: 300;
+      max-width: 680px;
+    }
+
+    .demo-callout p strong {
+      color: #93c5fd;
+      font-weight: 500;
+    }
+
+    .enterprise-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 40px;
+    }
+
+    .enterprise-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .enterprise-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--green);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .enterprise-inner h2 {
+      font-family: var(--display);
+      font-size: clamp(36px, 5vw, 64px);
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+
+    .enterprise-inner>p {
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 300;
+      max-width: 640px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .feature-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-bright);
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .feature-card h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #00ffb0;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border-bright);
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 13px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text);
+    }
+
+    .series-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 45, 45, 0.08);
+      border: 1px solid rgba(255, 45, 45, 0.2);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #ff8888;
+      letter-spacing: 0.05em;
+      margin-bottom: 24px;
+    }
+
+    footer {
+      padding: 48px 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .footer-brand strong {
+      color: var(--green);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 14px 20px;
+      }
+
+      .hero {
+        padding: 100px 20px 60px;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      .warning-banner {
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .enterprise-section {
+        padding: 60px 20px;
+      }
+
+      footer {
+        padding: 40px 20px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .section-divider {
+        margin: 0 20px;
+      }
+    }
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-inner>* {
+      animation: fade-up 0.7s ease both;
+    }
+
+    .hero-inner>*:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .hero-inner>*:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .hero-inner>*:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .hero-inner>*:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .hero-inner>*:nth-child(5) {
+      animation-delay: 0.5s;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">gijendra.dev</div>
+    <div class="nav-tag">The Quiet Shift · EP.01</div>
+    <div class="nav-badge">⚠ Live Demo</div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <div class="series-tag">⚠ The Quiet Shift — Episode 1</div>
+      <div class="hero-eyebrow">
+        <div class="eyebrow-line"></div>
+        <div class="eyebrow-text">The Quiet Shift</div>
+      </div>
+      <h1>
+        Automated the Work
+        <span class="accent">The Recruiter</span>
+        Was Doing.
+      </h1>
+      <p class="hero-subtitle">
+        Not a concept.
+        <strong>A fully working automation pipeline</strong> — resume screening, AI voice interviews, automated
+        decisions. Built to understand how far this actually goes.
+      </p>
+      <div class="hero-meta">
+        <div class="meta-chip">n8n · FastAPI · Llama 3</div>
+        <div class="meta-chip">April 2026</div>
+      </div>
+  </section>
+
+  <!-- WARNING BANNER -->
+  <div class="warning-banner">
+    <div class="warning-icon">⚡</div>
+    <p><strong>This is a demo system. Not a real deployment.</strong> A production version would need bias checks,
+      compliance layers, human review checkpoints, and safety constraints. The goal is transparency — to show the
+      technology is real, accessible, and already deployable today.</p>
+  </div>
+
+  <!-- SECTION 1: WHAT I BUILT -->
+  <section>
+    <div class="container">
+      <div class="section-header">
+        <div class="section-number">01 — What I Built</div>
+        <h2>AN END-TO-END HIRING AUTOMATION PIPELINE</h2>
+      </div>
+      <div class="prose">
+        <p>It started with a question I couldn't shake: <strong>how much of a real hiring workflow can already be
+            automated today?</strong> I looked at early-stage recruiting — not because it seemed easy, but because it
+          seemed genuinely hard. Judgment. Communication. Pattern recognition across hundreds of candidates.</p>
+        <p>So I tried breaking it down, step by step. a <strong>job application frontend</strong>, an <strong>automated
+            resume screener in n8n</strong>, a <strong>voice-based interview flow</strong> running on Llama 3 with
+          real-time speech, and a <strong>grading workflow</strong> that sends the hiring manager a one-click decision.
+          No manual intervention in the early pipeline. Just systems talking to systems.</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-item">
+          <div class="stat-value red">79%</div>
+          <div class="stat-label">Early hiring tasks automatable today</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value amber">85%</div>
+          <div class="stat-label">Cost reduction vs human team</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value green">24/7</div>
+          <div class="stat-label">Availability, zero overtime</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color:#c084fc">10K</div>
+          <div class="stat-label">Candidates simultaneously</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SECTION 2: THE WORKFLOW -->
+  <section>
+    <div class="container">
+      <div class="section-header">
+        <div class="section-number">02 — The Complete Workflow</div>
+        <h2>SIX STEPS. FULLY AUTOMATED.</h2>
+      </div>
+
+      <div class="workflow-steps">
+
+        <!-- STEP 1 -->
+        <div class="step-item">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <div class="step-title">Application Frontend</div>
+            <div class="step-desc">Candidate visits a clean job application page built in HTML/CSS/JS. They fill in
+              their details and paste their resume text. On submit, the payload fires to an n8n webhook endpoint —
+              including name, email, experience, and resume text.</div>
+            <div class="step-tag">HTML · JavaScript · n8n Webhook</div>
+          </div>
+        </div>
+
+        <!-- SCREENSHOT 1 -->
+        <div class="step-item" style="grid-template-columns:56px 1fr">
+          <div></div>
+          <div style="margin-left:16px; margin-bottom:16px;">
+            <div class="screenshot-block" style="margin:0">
+              <div class="screenshot-label"><span>Screenshot 1 — Application Form</span></div>
+              <div class="screenshot-frame">
+                <div class="screenshot-titlebar">
+                  <div class="dot red"></div>
+                  <div class="dot yellow"></div>
+                  <div class="dot green"></div>
+                  <div class="screenshot-url">technova.careers/apply · AI Solutions Engineer</div>
+                </div>
+                <div class="screenshot-img-area" id="ss1">
+                  <img src="assets/Screenshot1.png" alt="Application Form">
+                </div>
+                <div class="screenshot-caption">📸 Job application form → submits to n8n webhook on POST /apply</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-item">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <div class="step-title">AI Resume Screener (n8n Workflow 1)</div>
+            <div class="step-desc">The webhook triggers the first n8n workflow. It sends the resume to GPT-4o-mini with
+              the job description, gets back a score (0–100) and reason in JSON, then routes candidates. Score ≥
+              threshold → interview invite email. Below → rejection with AI-generated feedback.</div>
+            <div class="step-tag">n8n · OpenAI GPT-4o-mini · Gmail</div>
+          </div>
+        </div>
+
+        <!-- SCREENSHOT 2 -->
+        <div class="step-item" style="grid-template-columns:56px 1fr">
+          <div></div>
+          <div style="margin-left:16px; margin-bottom:16px;">
+            <div class="screenshot-block" style="margin:0">
+              <div class="screenshot-label"><span>Screenshot 2 — n8n Screening Workflow</span></div>
+              <div class="screenshot-frame">
+                <div class="screenshot-titlebar">
+                  <div class="dot red"></div>
+                  <div class="dot yellow"></div>
+                  <div class="dot green"></div>
+                  <div class="screenshot-url">giju.app.n8n.cloud · Workflow: AI Resume Screener</div>
+                </div>
+                <div class="screenshot-img-area" id="ss2">
+                  <img src="assets/Screenshot (93).png" alt="n8n Workflow 1">
+                </div>
+                <div class="screenshot-caption">📸 n8n Workflow 1: Webhook → OpenAI screener → IF score ≥ threshold →
+                  Invite / Reject email</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-item">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <div class="step-title">AI Voice Interview (Llama 3 on Colab)</div>
+            <div class="step-desc">The invite email contains a link to a FastAPI server tunneled via ngrok, hosted on a
+              Google Colab T4 GPU. The candidate opens the browser — shares screen (proctoring), connects microphone.
+              Llama 3 8B conducts a structured 10-question technical interview via voice: Whisper ASR transcribes input,
+              edge-tts speaks the AI's responses. Tab-switching and stopping screen share reduce the trust score
+              automatically.</div>
+            <div class="step-tag">FastAPI · Llama 3 8B · Whisper · edge-tts · ngrok · Colab T4</div>
+          </div>
+        </div>
+
+        <!-- SCREENSHOT 3 -->
+        <div class="step-item" style="grid-template-columns:56px 1fr">
+          <div></div>
+          <div style="margin-left:16px; margin-bottom:16px;">
+            <div class="screenshot-block" style="margin:0">
+              <div class="screenshot-label"><span>Screenshot 3 — Live AI Interview Interface</span></div>
+              <div class="screenshot-frame">
+                <div class="screenshot-titlebar">
+                  <div class="dot red"></div>
+                  <div class="dot yellow"></div>
+                  <div class="dot green"></div>
+                  <div class="screenshot-url">xxxx-xx-xx-xx.ngrok-free.app · AI Interviewer</div>
+                </div>
+                <div class="screenshot-img-area" id="ss3">
+                  <img src="assets/Screenshot (95).png" alt="Colab/Ngrok Interview UI">
+                </div>
+                <div class="screenshot-caption">📸 AI Interviewer UI — orb glows red when candidate speaks, green when
+                  AI responds</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step-item">
+          <div class="step-num">04</div>
+          <div class="step-body">
+            <div class="step-title">Interview Grading & Manager Notification (n8n Workflow 2)</div>
+            <div class="step-desc">After question 10, the backend posts the full transcript + trust score to n8n's
+              second webhook. GPT-4o-mini reads the transcript and generates a hiring report: technical score,
+              communication score, red flags, and a summary. The manager gets an email with the report and two one-click
+              links — Approve or Reject.</div>
+            <div class="step-tag">n8n · OpenAI GPT-4o-mini · Gmail · One-click decision</div>
+          </div>
+        </div>
+
+        <!-- SCREENSHOT 4 -->
+        <div class="step-item" style="grid-template-columns:56px 1fr">
+          <div></div>
+          <div style="margin-left:16px; margin-bottom:16px;">
+            <div class="screenshot-block" style="margin:0">
+              <div class="screenshot-label"><span>Screenshot 4 — n8n Grading Workflow</span></div>
+              <div class="screenshot-frame">
+                <div class="screenshot-titlebar">
+                  <div class="dot red"></div>
+                  <div class="dot yellow"></div>
+                  <div class="dot green"></div>
+                  <div class="screenshot-url">giju.app.n8n.cloud · Workflow: Interview Grader</div>
+                </div>
+                <div class="screenshot-img-area" id="ss4">
+                  <img src="assets/Screenshot (94).png" alt="n8n Workflow 2">
+                </div>
+                <div class="screenshot-caption">📸 n8n Workflow 2: Transcript → AI grader → Manager email with one-click
+                  Approve / Reject</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end workflow-steps -->
+
+      <!-- TOOL TABLE -->
+      <h3 style="font-family:var(--display);font-size:28px;color:#fff;letter-spacing:0.03em;margin:48px 0 20px">THE
+        STACK</h3>
+      <table class="tool-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Role in Pipeline</th>
+            <th>Handles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tool-name">n8n</span><span class="tool-badge">Automation</span></td>
+            <td>Orchestrates the full workflow, connects all services</td>
+            <td>Recruiter coordination & routing</td>
+          </tr>
+          <tr>
+            <td><span class="tool-name">GPT-4o-mini</span></td>
+            <td>Resume scoring + interview grading</td>
+            <td>CV screening & evaluation</td>
+          </tr>
+          <tr>
+            <td><span class="tool-name">Llama 3 8B</span><span class="tool-badge">Local LLM</span></td>
+            <td>Conducts live technical interview via voice</td>
+            <td>Phone screen & technical interview</td>
+          </tr>
+          <tr>
+            <td><span class="tool-name">faster-whisper</span></td>
+            <td>Transcribes candidate speech in real time</td>
+            <td>Listening & note-taking</td>
+          </tr>
+          <tr>
+            <td><span class="tool-name">edge-tts</span></td>
+            <td>Converts AI responses to natural voice</td>
+            <td>Voice interaction with candidates</td>
+          </tr>
+          <tr>
+            <td><span class="tool-name">FastAPI + ngrok</span></td>
+            <td>Serves interview webapp from Colab GPU</td>
+            <td>Interview infrastructure</td>
+          </tr>
+          <tr>
+            <td><span class="tool-name">Gmail (n8n)</span></td>
+            <td>Automated invite, rejection, and offer emails</td>
+            <td>Candidate email communication</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SECTION 3: IMPORTANT CONTEXT -->
+  <section>
+    <div class="container">
+      <div class="section-header">
+        <div class="section-number">03 — Important Context</div>
+        <h2>THIS IS A DEMO. NOT PRODUCTION.</h2>
+      </div>
+      <div class="demo-callout">
+        <h3>⚙ What this build intentionally skips</h3>
+        <p>
+          This is a <strong>proof-of-concept built for demonstration and awareness purposes.</strong> I built it to show
+          that the technology is real, accessible, and already deployable — not to hand it to an enterprise tomorrow. A
+          production-grade system would need significantly more: <strong>bias auditing and fairness testing</strong>,
+          compliance with employment law (GDPR, EEOC, local labour regulations), human-in-the-loop review at every
+          decision gate, candidate consent flows, data retention policies, appeal mechanisms, and extensive reliability
+          testing. Colab T4 GPUs are not production servers. ngrok tunnels are not production infrastructure. The score
+          threshold is hardcoded. The model can hallucinate. This demo is honest about all of that.
+        </p>
+      </div>
+      <div class="prose">
+        <p>I built this as a <strong>single developer over a weekend</strong> using free and open-source tools. That's
+          the point. The barrier to building something like this is almost nothing. Which means the timeline is much
+          shorter than most people assume.</p>
+        <p>Most early-stage hiring workflows are already very close to being automated. Not overhauled overnight — but
+          <strong>quietly, incrementally handled by systems.</strong> And the uncomfortable truth is that this
+          experiment showed me exactly how close we already are.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SECTION 4: ENTERPRISE CTA -->
+  <section class="enterprise-section">
+    <div class="enterprise-inner">
+      <div class="enterprise-eyebrow">— For Companies & Enterprises</div>
+      <h2>I CAN BUILD THIS<br>FOR YOUR ORGANISATION</h2>
+      <p>Need a custom hiring automation pipeline? I build agentic automation workflows using n8n, open-source LLMs, and
+        cloud infrastructure — tailored to your hiring process, your compliance requirements, and your stack.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <h4>Custom Screening Logic</h4>
+          <p>Job-specific scoring criteria, multi-stage filtering, team-specific rubrics.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡</div>
+          <h4>Compliance-Ready</h4>
+          <p>Human review gates, audit trails, bias monitoring, and GDPR-compliant data flows.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h4>Integrates Your Stack</h4>
+          <p>Works with your ATS, Slack, email, calendar, and HR tools via n8n connectors.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎙</div>
+          <h4>Voice or Text Interviews</h4>
+          <p>Real-time AI voice interviews or async video — your candidate experience, your rules.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h4>Manager Dashboards</h4>
+          <p>Ranked shortlists, AI-generated summaries, red flag detection, one-click decisions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h4>Rapid Deployment</h4>
+          <p>From brief to working prototype in days. I move fast and document everything.</p>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <a href="https://linkedin.com/in/gijendra-p-759143229" target="_blank" class="btn-primary">Connect on
+          LinkedIn</a>
+        <a href="https://github.com/gijendrap" target="_blank" class="btn-secondary">View GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        Built by <strong>Gijendra P</strong> · The Quiet Shift · Episode 01 of ∞
+      </div>
+      <div class="footer-links">
+        <a href="https://linkedin.com/in/gijendra-p-759143229" target="_blank">LinkedIn</a>
+        <a href="https://github.com/gijendrap" target="_blank">GitHub</a>
+        <a href="#">Next: Comming Soon</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
